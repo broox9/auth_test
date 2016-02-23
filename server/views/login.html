@@ -1,0 +1,22 @@
+<% layout('partials/layout') -%>
+<form method="post" action="/authenticate">
+  <p>
+    <label for="email">
+      Email
+      <input type="email" name="email" id="email" placeholder="you@me.we"/>
+    </label>
+  </p>
+  <p>
+    <label for="password">
+      Password
+      <input type="password" name="password" id="password" />
+    </label>
+  </p>
+  <p>
+    <button type="submit">Submit</button>
+  </p>
+
+  <p>
+    Are you no account? <a href="/register">Register</a> here
+  </p>
+</form>
