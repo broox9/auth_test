@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var session = require('client-sessions');
 var bcrypt = require('bcryptjs');
+var csurf = require('csurf'); //for cross site forgery;
 
 var app = express();
 
@@ -34,12 +35,17 @@ app.use(formParser);
 app.use(jsonParser);
 app.use(express.static(process.cwd() + '/public'))
 // app.set('view options', {layout: 'layout.html'});
+
+//Client Sessions (thanks Mozilla)
 app.use(session({
   cookieName: 'session',
-  secret: '9a79ah9aa98a98na98na', //totes made up for encryptification
+  secret: '9a79ah9aa98a98na98na', //TODO: totes made up for encryptification. should be an env variable
   duration: 1000 * 60 * 30, //30 minutes hard limit
   activeDuration: 1000 * 60 * 5 //5 minute renewal on navigation
 }));
+
+//unique tokens on every form to prevent Cross Site forgery
+app.use(csurf());
 
 //my own get session.  find the user and set it on the request
 app.use(function(req, res, next) {
@@ -73,7 +79,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/login', function(req, res) {
-  res.render('login');
+  res.render('login', { csrfToken: req.csrfToken() });
 });
 
 app.post('/login', function(req, res) {
@@ -103,7 +109,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/register', function(req, res) {
-  res.render('register');
+  res.render('register',  { csrfToken: req.csrfToken() });
 });
 
 app.post('/register', function(req, res) {

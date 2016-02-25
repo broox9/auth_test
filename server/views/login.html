@@ -1,6 +1,7 @@
 <% layout('partials/layout') -%>
 
 <form method="post" action="/login">
+  <input type="hidden" name="_csrf" value=<%- csrfToken %> />
   <p>
     <label for="email">
       Email
