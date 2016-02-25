@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "babel-register": "^6.5.2",
+    "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
     "client-sessions": "0.7.0",
     "ejs": "^2.4.1",

@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var session = require('client-sessions');
+var bcrypt = require('bcryptjs');
 
 var app = express();
 
@@ -40,6 +41,32 @@ app.use(session({
   activeDuration: 1000 * 60 * 5 //5 minute renewal on navigation
 }));
 
+//my own get session.  find the user and set it on the request
+app.use(function(req, res, next) {
+  if (req.session && req.session.user) {
+    User.findOne({email: req.session.user.email}, function(err, user) {
+      if (user) {
+        req.user = user;
+        delete req.user.password;
+        req.session.user = user;
+        res.locals.user = user;
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+});
+
+// my own require login
+function requireLogin(req, res, next) {
+  if (!req.user) {
+    res.redirect(301, '/');
+  } else {
+    next();
+  }
+}
+
 
 app.get('/', function(req, res) {
   res.render('index');
@@ -53,10 +80,9 @@ app.post('/login', function(req, res) {
   User.findOne({ email: req.body.email}, function (err, user) {
     if (!user) {
 
-      console.log("USER NOT FOUND", req.body, err);
       res.render('login', {error: 'no user exists'});
 
-    } else if (user.password === req.body.password) {
+    } else if (bcrypt.compareSync(req.body.password, user.password)) {
 
       req.session.user = user; //set-cookie: session={..user/session data}
       res.locals.user = user;
@@ -81,11 +107,12 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
+  var passwordHash = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
   var usr = new User({
     fname: req.body.fname,
     lname: req.body.lname,
     email: req.body.email,
-    password: req.body.password
+    password: passwordHash
   });
 
   usr.save(function(err, user) {
@@ -103,20 +130,8 @@ app.post('/register', function(req, res) {
   });
 });
 
-app.get('/dashboard', function(req, res) {
-  if (req.session && req.session.user) {
-    User.findOne({email: req.session.user.email}, function(err, user) {
-      if (!user) {
-        req.session.reset();
-        req.redirect('/login');
-      } else {
-        res.locals.user = user
-        res.render('dashboard');
-      }
-    });
-  } else {
-    res.redirect('/login');
-  }
+app.get('/dashboard', requireLogin, function(req, res) {
+  res.render('dashboard');
 });
 
 
