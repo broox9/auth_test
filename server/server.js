@@ -41,7 +41,10 @@ app.use(session({
   cookieName: 'session',
   secret: '9a79ah9aa98a98na98na', //TODO: totes made up for encryptification. should be an env variable
   duration: 1000 * 60 * 30, //30 minutes hard limit
-  activeDuration: 1000 * 60 * 5 //5 minute renewal on navigation
+  activeDuration: 1000 * 60 * 5, //5 minute renewal on navigation'
+  httpOnly: true, //never let browser JS get to this.  http only cookie
+  secure: false, //only user cookies over https
+  ephemeral: true, //delete cookie on browser close
 }));
 
 //unique tokens on every form to prevent Cross Site forgery
