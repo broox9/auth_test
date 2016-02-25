@@ -34,7 +34,7 @@ app.use(jsonParser);
 app.use(express.static(process.cwd() + '/public'))
 // app.set('view options', {layout: 'layout.html'});
 app.use(session({
-  cookieName: 'session', 
+  cookieName: 'session',
   secret: '9a79ah9aa98a98na98na', //totes made up for encryptification
   duration: 1000 * 60 * 30, //30 minutes hard limit
   activeDuration: 1000 * 60 * 5 //5 minute renewal on navigation
@@ -50,27 +50,30 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-  var user = User.findOne({ email: req.body.email}, function (err, user) {
-    if (err) {
-      
+  User.findOne({ email: req.body.email}, function (err, user) {
+    if (!user) {
+
+      console.log("USER NOT FOUND", req.body, err);
       res.render('login', {error: 'no user exists'});
-    
-    } else if(user.password === req.body.password) { 
-    
+
+    } else if (user.password === req.body.password) {
+
       req.session.user = user; //set-cookie: session={..user/session data}
-      res.redirect('/dashboard');
-    
+      res.locals.user = user;
+      res.redirect(301, 'dashboard');
+
     } else {
-      
-      res.render('login', {error: 'incorrect password'});   
-    
+      console.log('some other thing happened', req.body, user);
+      res.render('login', {error: 'incorrect password'});
+
     }
   });
 });
 
 
 app.get('/logout', function(req, res) {
-  res.render('index');
+  req.session.reset();
+  res.redirect(301, '/');
 });
 
 app.get('/register', function(req, res) {
@@ -78,23 +81,24 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
-  var user = new User({
+  var usr = new User({
     fname: req.body.fname,
     lname: req.body.lname,
     email: req.body.email,
     password: req.body.password
   });
 
-  user.save(function(err) {
+  usr.save(function(err, user) {
     if (err) {
       var msg = 'Mistakes were made';
       if(err.code === 11000) {
         msg = 'That email is already taken';
       }
-      var errMsg = new Error(msg)
+      var errMsg = new Error(msg);
       res.render('register', {error: errMsg});
     } else {
-      res.redirect('/dashboard');
+      res.locals.user = user;
+      res.redirect(301, '/dashboard');
     }
   });
 });
@@ -106,8 +110,8 @@ app.get('/dashboard', function(req, res) {
         req.session.reset();
         req.redirect('/login');
       } else {
-        console.log('USER', user);
-        res.render('dashboard', {user: user});
+        res.locals.user = user
+        res.render('dashboard');
       }
     });
   } else {
