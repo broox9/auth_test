@@ -1,0 +1,17 @@
+<% layout('partials/new-look-layout') -%>
+<main ng-app="newLook" class="new-look-app">
+
+  <div class="capture-section" ng-controller="PictureController as picCtrl">
+    {{UI.tempFileUrl}}
+
+    <img class="picture" src="about:blank" />
+
+    <button class='capture-button' ng-click="picCtrl.capturePhoto()">
+      Capture<br /><i class="camera-icon"></i>
+    </button>
+
+    <input type="file" id="capture-picture" ng-module="UI.imageCapture" accept="image/*" />
+  </div>
+</main>
+
+<script src="/js/newlook.js"></script>

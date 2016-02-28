@@ -1,39 +1,33 @@
 <% layout('partials/layout') -%>
 
-<form method="post" action="/register">
+<form method="post" action="/register" class="session-form">
   <input type="hidden" name="_csrf" value=<%- csrfToken %> />
   <p>
-    <label for="fname">
-      First Name
-      <input type="text" name="fname" id="fname" placeholder="first name"/>
-    </label>
+    <input type="text" name="fname" id="fname" placeholder="first name"/>
   </p>
+
   <p>
-    <label for="lname">
-      Last Name
-      <input type="text" name="lname" id="lname" placeholder="last name"/>
-    </label>
+    <input type="text" name="lname" id="lname" placeholder="last name"/>
   </p>
+
   <p>
-    <label for="email">
-      Email
-      <input type="email" name="email" id="email" placeholder="you@me.we"/>
-    </label>
+    <input type="email" name="email" id="email" placeholder="you@me.we"/>
   </p>
+
   <p>
-    <label for="password">
-      Password
-      <input type="password" name="password" id="password" placeholder="password" />
-    </label>
+    <input type="password" name="password" id="password" placeholder="password" />
   </p>
+
   <p>
-    <label for="conf_password">
-      Confirm Password
-      <input type="password" name="conf_password" id="conf_password" placeholder="confirm password" />
-    </label>
+    <input type="password" name="conf_password" id="conf_password" placeholder="confirm password" />
   </p>
+
   <p>
     <button type="submit">Submit</button>
+  </p>
+
+  <p>
+    Already have an account? <a href="/login">login</a>
   </p>
 
 </form>

@@ -1,25 +1,21 @@
+import http from 'http';
+import fs from 'fs';
 var express = require('express');
 var renderEngine = require('ejs-mate');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
+import {User, Item, Look } from  './models.js';
+import mongoose from 'mongoose';
 var session = require('client-sessions');
 var bcrypt = require('bcryptjs');
 var csurf = require('csurf'); //for cross site forgery;
+import  { dateToUnix } from './helpers.js';
 
 var app = express();
 
 // = DB default user 'brookes' password: 'w00t'
 mongoose.connect('mongodb://localhost/tracebook');
 
-var User = mongoose.model('User', new Schema({
-  id: ObjectId,
-  fname: String,
-  lname: String,
-  email: {type: String, unique: true},
-  password: String
-}));
+
 
 
 // = Middleware
@@ -78,7 +74,11 @@ function requireLogin(req, res, next) {
 
 
 app.get('/', function(req, res) {
-  res.render('index');
+  res.render('looks', { csrfToken: req.csrfToken() });
+});
+
+app.get('/look/new', function(req, res) {
+  res.render('new', { csrfToken: req.csrfToken() });
 });
 
 app.get('/login', function(req, res) {
@@ -121,7 +121,9 @@ app.post('/register', function(req, res) {
     fname: req.body.fname,
     lname: req.body.lname,
     email: req.body.email,
-    password: passwordHash
+    password: passwordHash,
+    created: Date.now(),
+    modified: Date.now(),
   });
 
   usr.save(function(err, user) {
@@ -146,6 +148,6 @@ app.get('/dashboard', requireLogin, function(req, res) {
 
 
 // = Server
-var server = app.listen(3005, function() {
+var server = http.createServer(app).listen(3005, function() {
   console.log('AUTH TEST on 3005');
 });

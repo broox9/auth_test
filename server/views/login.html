@@ -1,18 +1,12 @@
 <% layout('partials/layout') -%>
 
-<form method="post" action="/login">
+<form method="post" action="/login" class="session-form">
   <input type="hidden" name="_csrf" value=<%- csrfToken %> />
   <p>
-    <label for="email">
-      Email
-      <input type="email" name="email" id="email" placeholder="you@me.we"/>
-    </label>
+    <input type="email" name="email" id="email" placeholder="you@me.we"/>
   </p>
   <p>
-    <label for="password">
-      Password
-      <input type="password" name="password" id="password" />
-    </label>
+    <input type="password" name="password" id="password" />
   </p>
   <p>
     <button type="submit">Submit</button>

@@ -1,0 +1,52 @@
+.new-look-app {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: #f1f1f1;
+}
+
+
+.capture-section {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  /*background: rgba(100,100,100, 0.25);*/
+  /*transform: translate(-50%, -50%);*/
+}
+
+#capture-picture {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.capture-button {
+  position: absolute;
+  color: white;
+  bottom: 0%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7C4DFF;
+  padding: 0.5rem 2rem;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin: auto;
+}
+
+i.camera-icon:before {
+  content: '\1f4f7';
+  font-size: 80px;
+  display: none;
+}
+
+.new-look-app .picture {
+  position: relative;
+  max-height:100%;
+  max-width: 100%;
+  z-index: 1;
+}
+
+.picture[src="about:blank"] {
+  display: none;
+}
